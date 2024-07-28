@@ -11,8 +11,8 @@ bundle id は com.example.frontend
 
 set up server
 ```sh
-$ cd backend
-$ go run cmd/main.go
+$ cd backend/cmd
+$ go run main.go
 ```
 
 ### frontend

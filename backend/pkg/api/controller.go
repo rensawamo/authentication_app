@@ -53,7 +53,7 @@ func SetRoutes(router *gin.Engine, client *firestore.Client, authClient *auth.Cl
 	router.Run()
 }
 
-// generateCustomToken はアクセストークンを受け取り、カスタムトークンを生成します
+// generateCustomToken はアクセストークンを受け取り、カスタムトークンを生成
 func generateCustomToken(authClient *auth.Client, accessToken string) (string, error) {
 	ctx := context.Background()
 	token, err := authClient.VerifyIDToken(ctx, accessToken)

@@ -64,18 +64,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   final User? currentUser = auth.currentUser;
                   if (currentUser != null) {
                     final idTokenResult = await currentUser.getIdTokenResult();
-                    final token = idTokenResult.token;
+                    final accessToken = idTokenResult.token;
                     setState(() {
-                      widgetCurrentToken = token!;
+                      widgetCurrentToken = accessToken!;
                     });
-                    logger.d('IDトークン: $token');
+                    logger.d('accessToken: $accessToken');
                     // IDトークンをバックエンドに送信
                     final response = await http.post(
                       Uri.parse(
                           'http://10.0.2.2:8080/getCustomToken'), //android emulator 想定
                       headers: {
                         'Content-Type': 'application/json',
-                        'AuthToken': token!,
+                        'AuthToken': accessToken!,
                       },
                     );
                     if (response.statusCode == 200) {
@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       setState(() {
                         widgetCustomToken = customTokenJson['customToken'];
                       });
-                      logger.d('CustomToken: $customToken');
+                      logger.d('customToken: $customToken');
                     }
                   } else {
                     print('サインインに失敗しました');
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                   if (reult.statusCode == 200) {
                     final responseData = jsonDecode(reult.body);
-                    logger.d("IDトークン: ${responseData['id_token']}");
+                    logger.d("newAccesesToken: ${responseData['id_token']}");
                     setState(() {
                       widgetCurrentToken = responseData["id_token"];
                     });
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     'AuthToken': "invalidToken",
                   },
                 );
-                logger.d(response.body);
+                logger.e(response.body);
               },
               child: const Text('[401] Unauthorized APIリクエスト'),
             ),
