@@ -10,8 +10,7 @@ type AnnouncementServer struct {
 	pb.UnimplementedHelloServiceServer
 }
 
-func (s *AnnouncementServer) GetAnnouncement(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	// ダミーデータのお知らせを作成
+func (s *AnnouncementServer) GetHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	reply := &pb.HelloReply{
 		Message: "認証成功 こんにちは",
 	}

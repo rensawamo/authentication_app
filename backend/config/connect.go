@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"log"
+	"os"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
@@ -11,7 +12,7 @@ import (
 )
 
 func firebaseApp(ctx context.Context) (*firebase.App, error) {
-	opt := option.WithCredentialsFile("/home/rensawamo/desktop/fishing/RecipesApp/server/account_key.json")
+	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_ACCOUNT_KEY_LOCATION"))
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		return nil, err
