@@ -1,25 +1,20 @@
-package app
+package server
 
 import (
-	pb "github.com/RecepieApp/server/gen/buf/proto"
-	"github.com/RecepieApp/server/middleware"
+	pb "github.com/authentication_app/backend/gen/buf/proto"
+	"github.com/authentication_app/backend/middleware"
+	"github.com/authentication_app/backend/pkg/app"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-// serverはpb.ExampleServiceServerに対する実装です。
-type server struct {
+type Server struct {
 	pb.UnimplementedHelloServiceServer
 }
-type AnnouncementServer struct {	
-	pb.UnimplementedAnnouncementServiceServer
-}
 
-func (a *Application) setupGrpcServer() {
-	// 認証インターセプターを使用してgRPCサーバーを設定
+func SetupGrpcServer(a *app.Application) {
 	interceptor := middleware.AuthInterceptor(a.FireAuth)
 	a.GrpcServer = grpc.NewServer(grpc.UnaryInterceptor(interceptor))
-	pb.RegisterHelloServiceServer(a.GrpcServer, &server{})
-	pb.RegisterAnnouncementServiceServer(a.GrpcServer, &AnnouncementServer{})
+	pb.RegisterHelloServiceServer(a.GrpcServer, &Server{})
 	reflection.Register(a.GrpcServer)
 }

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package hello;
+// Goのパッケージ指定を追加
+option go_package = "github.com/authentication_app/backend/proto";
+
+// The greeting service definition.
+service HelloService {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}

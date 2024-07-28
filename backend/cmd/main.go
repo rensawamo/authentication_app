@@ -1,16 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
-	"fmt"
-	"log" // Import the log package
-	"os"
+	"log"
+	"net"
 
-	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/RecepieApp/server/app"
-	"github.com/RecepieApp/server/runtime"
+	"github.com/authentication_app/backend/pkg/app"
+	"github.com/authentication_app/backend/pkg/server"
 )
 
 var _ = flag.Bool("debug", false, "Enable Bun Debug log")
@@ -18,30 +14,24 @@ var _ = flag.Bool("debug", false, "Enable Bun Debug log")
 func main() {
 	flag.Parse()
 
-		// mysql 接続
-		dsn, ok := os.LookupEnv("DSN")
-		dieFalse(ok, "env DSN not found")
-	
-		db, err := sql.Open("mysql", dsn)
-		dieIf(err)
-	
-		err = db.Ping()
-		dieIf(err)
-	
-		fmt.Println("connected")
-
-		
 	a := app.Application{}
 
 	if err := a.LoadConfigurations(); err != nil {
-        log.Fatalf("Failed to load configurations: %v", err)
-    }
+		log.Fatalf("Failed to load configurations: %v", err)
+	}
 
-    if err := runtime.Start(&a); err != nil {
-        log.Fatalf("Failed to start the application: %v", err)
-    }
+	server.SetupGrpcServer(&a)
+
+	lis, err := net.Listen("tcp", ":"+a.GrpcPort)
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
+	}
+
+	log.Printf("gRPC server listening on %s", a.GrpcPort)
+	if err := a.GrpcServer.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve gRPC server: %v", err)
+	}
 }
-
 
 func dieFalse(ok bool, msg string) {
 	if !ok {

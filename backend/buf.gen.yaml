@@ -1,0 +1,20 @@
+version: v1
+managed:
+  enabled: true
+
+  go_package_prefix:
+    default: github.com/authentication_app/backend
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/envoyproxy/protoc-gen-validate
+
+plugins:
+  - plugin: go
+    out: gen/buf
+    opt: paths=source_relative
+
+  - plugin: go-grpc
+    out: gen/buf
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=true
