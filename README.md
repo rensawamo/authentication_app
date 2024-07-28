@@ -1,9 +1,9 @@
 
-# frontendで firebase の環境構築を行う
+### frontendで firebase の環境構築を行う
 ちなみに ビルドはAndroid emulaterを想定
 bundle id は com.example.frontend 
 
-# frontend と backendの
+###  frontend と backend の
 .env.example を .envに変え適切な値を代入
 
 
