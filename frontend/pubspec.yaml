@@ -41,6 +41,8 @@ dependencies:
   firebase_core: ^2.24.2
   firebase_auth: ^4.16.0
   logger: ^2.4.0
+  protobuf: ^3.1.0
+  grpc: ^4.0.0
 
 dev_dependencies:
   flutter_test:

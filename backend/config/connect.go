@@ -41,16 +41,9 @@ func GetAuthClient(ctx context.Context) (*auth.Client,  error) {
 	if err != nil {
 		return nil, err
 	}
-	claims := map[string]interface{}{
-		"premiumAccount": true,
-}
-
-token, err := authClient.CustomTokenWithClaims(ctx, "some-uid", claims)
-if err != nil {
-		log.Fatalf("error minting custom token: %v\n", err)
-}
-
-log.Printf("Got custom token: %v\n", token)
+	if err != nil {
+			log.Fatalf("error minting custom token: %v\n", err)
+	}
 	return authClient, nil
 }
 

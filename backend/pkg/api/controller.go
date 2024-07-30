@@ -9,10 +9,9 @@ import (
 	md "github.com/authentication_app/backend/middleware"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 )
 
-func SetRoutes(router *gin.Engine, client *firestore.Client, authClient *auth.Client, redisClient *redis.Client) {
+func SetRoutes(router *gin.Engine, client *firestore.Client, authClient *auth.Client, ) {
 	router.OPTIONS("/*any", func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})

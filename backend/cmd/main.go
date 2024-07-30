@@ -3,11 +3,9 @@ package main
 import (
 	"flag"
 	"log"
-	"net"
 
-	"github.com/authentication_app/backend/pkg/app"
+	"github.com/authentication_app/backend/model"
 	"github.com/authentication_app/backend/pkg/server"
-	"github.com/authentication_app/backend/runtime"
 	"github.com/joho/godotenv"
 )
 
@@ -22,26 +20,16 @@ func main() {
 
 	flag.Parse()
 
-	a := app.Application{}
-
-	if err := a.LoadConfigurations(); err != nil {
-		log.Fatalf("Failed to load configurations: %v", err)
-	
-	}
-	if err := runtime.Start(&a); err != nil {
-		log.Fatalf("Failed to start the application: %v", err)
-}
-
-	server.SetupGrpcServer(&a)
-
-	lis, err := net.Listen("tcp", ":"+a.GrpcPort)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+	a := model.Application{}
+	if err := server.SetUpRestServer(&a); err != nil {
+		log.Fatalf("Failed to set up REST server: %v", err)
 	}
 
-	log.Printf("gRPC server listening on %s", a.GrpcPort)
-	if err := a.GrpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server: %v", err)
+	server.SetUpGrpcServer(&a)
+
+	go server.StartGrpcServer(&a)
+	if err := server.StartRestServer(&a); err != nil {
+		log.Fatalf("Failed to start REST server: %v", err)
 	}
 }
 

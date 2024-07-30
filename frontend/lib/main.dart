@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/gen/proto/file.pb.dart';
+import 'package:frontend/gen/proto/file.pbgrpc.dart';
 import 'package:frontend/logger.dart';
+import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_connection_interface.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -99,6 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               /// CustomTokenを使用してrefreshTokenを取得
               onPressed: () async {
+                if (widgetCustomToken.isEmpty) {
+                  logger.e('CustomTokenが取得されていません');
+                  return;
+                }
                 final Uri signInUrl = Uri.parse(
                     'https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${dotenv.get('API_KEY')}');
 
@@ -151,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
                 logger.d(response.body);
               },
-              child: const Text('[正常系] APIリクエスト'),
+              child: const Text('[正常系] RESTAPIリクエスト'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -164,7 +172,69 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
                 logger.e(response.body);
               },
-              child: const Text('[401] Unauthorized APIリクエスト'),
+              child: const Text('[401] RESTUnauthorized APIリクエスト'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final channel = ClientChannel(
+                  '10.0.2.2',
+                  port: 50051,
+                  options: const ChannelOptions(
+                    credentials: ChannelCredentials.insecure(),
+                  ),
+                );
+
+                final client = HelloServiceClient(channel);
+                final request = HelloRequest();
+                // メタデータの追加
+                final options = CallOptions(
+                  metadata: {
+                    'authorization': 'Bearer $widgetCurrentToken',
+                  },
+                );
+
+                try {
+                  final response =
+                      await client.sayHello(request, options: options);
+                  logger.d('Response: ${response.message}');
+                } catch (e) {
+                  logger.e('Error: $e');
+                } finally {
+                  await channel.shutdown();
+                }
+              },
+              child: const Text('[正常系]gRPCリクエスト'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final channel = ClientChannel(
+                  '10.0.2.2',
+                  port: 50051,
+                  options: const ChannelOptions(
+                    credentials: ChannelCredentials.insecure(),
+                  ),
+                );
+
+                final client = HelloServiceClient(channel);
+                final request = HelloRequest();
+                // メタデータの追加
+                final options = CallOptions(
+                  metadata: {
+                    'authorization': 'Bearer invalidToken',
+                  },
+                );
+
+                try {
+                  final response =
+                      await client.sayHello(request, options: options);
+                  logger.d('Response: ${response.message}');
+                } catch (e) {
+                  logger.e('Error: $e');
+                } finally {
+                  await channel.shutdown();
+                }
+              },
+              child: const Text('[UNAUTHENTICATED]gRPC Unauthorizedリクエスト'),
             ),
           ],
         ),
