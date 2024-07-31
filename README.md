@@ -1,3 +1,9 @@
+### ⭐️ zenn 記事は[こちら](https://zenn.dev/renren0112/articles/56de70adea15c3)
+
+# シーケンス図
+![image](https://github.com/user-attachments/assets/8362002b-e07e-40e1-84c8-db584c9af419)
+
+
 # ビルド手順
 
 ### frontendで firebase の環境構築を行う
